@@ -40,12 +40,22 @@ Node.js 24 LTS was installed with winget. If `node` is not found in a shell, pre
   localStorage, every read validated and wrapped in try/catch).
 - `src/views/`: one component per screen; `App.tsx` switches on `state.phase`. No router,
   no URL changes, no history entries: on purpose, so back gestures can't reveal an old card.
+- `src/themes.ts`: the six themes. `applyTheme` sets the group-screen CSS variables
+  (`--bg`, `--ink`, `--line`, `--border`, `--muted`, `--faint`, `--stamp`, `--error`) on `<html>`.
+  A new theme must pass `tests/unit/themes.test.ts` (contrast).
+- `src/data/wordLists.ts`: custom word lists (validation, paste parsing, limits). A custom list's
+  word entries use the list **id** as their category; `Settings.categories` holds built-in
+  category names and custom list ids, and may hold stale ids: always read it through
+  `activeSelection()`, which keeps only built-ins and visible lists with 5+ words. Empty = all
+  built-in. The round's `secret.category` is the display name.
 - `src/styles.css`: CSS variables from the design. Group screens use `--bg`/`--ink`…;
-  private (handoff/reveal) screens use `--p-*` and always stay dark.
+  private (handoff/reveal) screens use `--p-*` and always stay dark. The "Motion" section at
+  the end holds all animations, inside `prefers-reduced-motion: no-preference`.
 
 ## Privacy rules (don't break these)
 
 - A role is only in the DOM while the card is being held (`RevealView`); not hidden with CSS.
+  The card face may animate in, but letting go must remove it instantly (no exit animation).
 - The word card and the Imposter card share one layout; only the words differ.
 - Backgrounding the app (`visibilitychange`/`pagehide`) shows a full-screen cover and sends
   a reveal back to its handoff screen. A round is never saved or resumed.
@@ -66,14 +76,12 @@ Push to `main` → `.github/workflows/deploy.yml` runs `npm test` and the build,
 to GitHub Pages at https://ivan-cmdafk.github.io/Who-is-the-imposter/. One-time: repo
 Settings › Pages › Source: GitHub Actions. The Vite `base` must match the repo name.
 
-## Status (2026-10-17)
+## Status (2026-10-18)
 
-- Done: M0 (local), M1 engine, M2 word bank, M3 setup + storage, M4 private reveal,
-  M5 round flow. 39 unit tests and 4 WebKit e2e tests pass. PWA manifest, icons, offline cache.
+- Done: M0–M5 (playable round, deployed, installed and tried on the owner's iPhone: "looks good"),
+  M7 (themes, custom word lists, v0.2.0) and animations. 92 unit tests and 10 WebKit e2e runs pass.
 - Not done yet:
-  - First push + enabling GitHub Pages (T0.4); installing on the iPhone; all on-device checks
-    (P3, P5, P6, D1–D5, U2, U6). Nothing has been tested on a real iPhone yet.
+  - Formal on-device checklist (P3, P5, P6, D1–D5, U2, U6) and the TH/CW checks on the phone.
   - Reordering players in Setup (only add/rename/remove exist).
-  - M7, plan Section 8: six themes (Paper is the default and current look) and custom word lists.
 - Known: Playwright's WebKit on Windows draws the condensed display font (Archivo, `font-stretch: 68%`)
-  with overlapping letters. Believed to be a Windows WebKit rendering quirk; confirm on the iPhone.
+  with overlapping letters. It renders correctly on the iPhone; ignore it in Windows screenshots.

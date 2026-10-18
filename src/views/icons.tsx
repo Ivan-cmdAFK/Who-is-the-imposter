@@ -8,7 +8,7 @@ const base = {
 } as const;
 
 export const ArrowRight = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" {...base}>
+  <svg class="arrow" width="22" height="22" viewBox="0 0 24 24" {...base}>
     <path d="M5 12h14M13 6l6 6-6 6" />
   </svg>
 );
@@ -19,9 +19,29 @@ export const ChevronLeft = () => (
   </svg>
 );
 
-export const Cross = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" {...base}>
+export const ChevronRight = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...base} stroke="var(--ink)">
+    <path d="M9 6l6 6-6 6" />
+  </svg>
+);
+
+export const Cross = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" {...base}>
     <path d="M6 6l12 12M18 6L6 18" />
+  </svg>
+);
+
+export const Plus = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" {...base}>
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+);
+
+export const Sliders = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" {...base} stroke-width={1.6}>
+    <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+    <circle cx="16" cy="7" r="2" />
+    <circle cx="10" cy="17" r="2" />
   </svg>
 );
 

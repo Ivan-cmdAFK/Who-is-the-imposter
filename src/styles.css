@@ -1,5 +1,5 @@
-/* Colors come from the design (Paper theme). Group screens use --bg; private screens use --p-*.
-   Section 8 of the plan (themes) will swap the group variables per theme. */
+/* Colors come from the design. The values below are the Paper theme; src/themes.ts overrides the
+   group-screen variables (--bg, --ink, …) per theme. Private screens use --p-* and never change. */
 :root {
   --bg: #f3f1ec;
   --ink: #151515;
@@ -281,7 +281,6 @@ button:disabled {
 
 .switch[aria-checked='true'] {
   background: var(--ink);
-  justify-content: flex-end;
 }
 
 .switch span {
@@ -289,6 +288,10 @@ button:disabled {
   height: 26px;
   border-radius: 13px;
   background: var(--bg);
+}
+
+.switch[aria-checked='true'] span {
+  transform: translateX(20px);
 }
 
 .segmented {
@@ -366,14 +369,17 @@ button:disabled {
 
 /* ---------- Setup ---------- */
 
-.seat-list {
+/* A list with a heavy rule on top and hairlines between rows. */
+.seat-list,
+.list-rows {
   list-style: none;
   margin: 0;
   padding: 0;
   border-top: 1.5px solid var(--ink);
 }
 
-.seat-list li {
+.seat-list li,
+.list-rows li {
   border-bottom: 1px solid var(--line);
 }
 
@@ -775,4 +781,433 @@ button:disabled {
   font-weight: 800;
   font-stretch: 75%;
   text-transform: uppercase;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.hint.error {
+  font-weight: 500;
+  color: var(--error);
+}
+
+.icon-btn.end {
+  margin: 0 -12px 0 0;
+  color: var(--ink);
+}
+
+.chip:disabled {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.chip-note {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ---------- Make it yours (themes + lists) ---------- */
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.theme-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: rgba(255, 255, 255, 0.45);
+  text-align: left;
+  min-width: 0;
+}
+
+.theme-card[aria-checked='true'] {
+  border: 2px solid var(--ink);
+  padding: 9.5px;
+}
+
+.swatch {
+  flex-shrink: 0;
+  position: relative;
+  width: 44px;
+  height: 60px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.swatch-dot {
+  position: absolute;
+  left: 6px;
+  top: 7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+.swatch-bar {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.theme-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.theme-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.theme-blurb {
+  font-size: 12px;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.list-name {
+  font-size: 17px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-dashed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  margin-top: 12px;
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.btn-dashed:disabled {
+  color: var(--muted);
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 44px;
+  margin-left: -8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.list-title {
+  display: block;
+  margin-top: 6px;
+}
+
+.list-title input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 0 0 6px;
+  border: 0;
+  border-bottom: 1.5px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  font-size: 48px;
+  line-height: 1;
+}
+
+.list-title input[aria-invalid='true'] {
+  border-bottom-color: var(--error);
+}
+
+.word-chips {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.word-chips li {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding-left: 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--line);
+  font-size: 15px;
+  font-weight: 500;
+  max-width: 100%;
+}
+
+.word-chips li span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.word-chips button {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-row input[aria-invalid='true'] {
+  border-style: solid;
+  border-color: var(--error);
+}
+
+.btn-danger {
+  flex: 1;
+  height: 52px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--error);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-danger.confirming {
+  background: var(--error);
+  color: var(--bg);
+  text-decoration: none;
+}
+
+/* ---------- Motion ----------
+   Hiding a card is always instant (privacy). Everything else eases. */
+
+html,
+body {
+  transition: background-color 300ms ease;
+}
+
+button,
+.btn,
+.switch span,
+.ticks span {
+  transition:
+    transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1),
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.switch span {
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+button:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.btn:not(:disabled):active,
+.list-row:not(:disabled):active,
+.btn-dashed:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.switch:not(:disabled):active span {
+  width: 30px;
+}
+
+.btn-split .arrow {
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.btn-split:not(:disabled):active .arrow {
+  transform: translateX(5px);
+}
+
+.link:active,
+.back-link:active {
+  opacity: 0.6;
+}
+
+@media (hover: hover) {
+  .chip:not(:disabled):hover,
+  .vote-grid button:hover,
+  .theme-card:hover {
+    border-color: var(--ink);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .screen {
+    animation: screen-in 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .screen.private {
+    animation-name: fade-in;
+    animation-duration: 200ms;
+  }
+
+  .chip[aria-pressed='true'],
+  .vote-grid button[aria-checked='true'],
+  .theme-card[aria-checked='true'],
+  .segmented button[aria-pressed='true'] {
+    animation: pop 240ms cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+
+  .seat-list li,
+  .word-chips li,
+  .list-rows li {
+    animation: rise 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .order-list li {
+    animation: slide-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .order-list li:nth-child(2) { animation-delay: 40ms; }
+  .order-list li:nth-child(3) { animation-delay: 80ms; }
+  .order-list li:nth-child(4) { animation-delay: 120ms; }
+  .order-list li:nth-child(5) { animation-delay: 160ms; }
+  .order-list li:nth-child(6) { animation-delay: 200ms; }
+  .order-list li:nth-child(n + 7) { animation-delay: 240ms; }
+
+  .hold-target {
+    animation: breathe 2.6s ease-in-out infinite;
+  }
+
+  .card-back:active .hold-target {
+    animation: none;
+    transform: scale(0.92);
+  }
+
+  /* Showing a card eases in; letting go removes it from the page at once. */
+  .card-face {
+    animation: card-in 150ms ease-out;
+  }
+
+  .stamp {
+    animation: stamp-in 460ms cubic-bezier(0.2, 1.5, 0.4, 1) 200ms both;
+  }
+
+  .winner,
+  .notice,
+  [role='status'] {
+    animation: rise 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .field-error {
+    animation: nudge 280ms ease-out;
+  }
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0.4;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: rotate(-20deg) scale(2.2);
+  }
+  70% {
+    opacity: 1;
+  }
+}
+
+@keyframes nudge {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
 }

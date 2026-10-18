@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { peek } from './helpers';
 
 const NAMES = ['Ana', 'Sam', 'Maya', 'Jordan'];
 
@@ -11,28 +12,12 @@ async function addPlayers(page: Page, names: string[]) {
   }
 }
 
-/** Press and hold the card, read it, let go. Returns what the card showed. */
-async function peek(page: Page) {
-  const card = page.locator('.card');
-  const box = (await card.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await expect(page.locator('.card-face')).toBeVisible();
-  // textContent, not innerText: the card shows words in CSS uppercase.
-  const kicker = (await page.locator('.card-face .kicker').textContent()) ?? '';
-  const big = (await page.locator('.card-face .big').textContent()) ?? '';
-  const pageText = await page.locator('body').innerText();
-  await page.mouse.up();
-  await expect(page.locator('.card-face')).toHaveCount(0);
-  return { imposter: kicker === 'You are the', big, pageText };
-}
-
 test('a full round: private reveals, clues, vote and result', async ({ page }) => {
   await page.goto('./');
   await addPlayers(page, NAMES);
   await page.getByRole('button', { name: 'Start game' }).click();
 
-  const cards: { name: string; imposter: boolean; big: string; pageText: string }[] = [];
+  const cards: ({ name: string } & Awaited<ReturnType<typeof peek>>)[] = [];
   for (const name of NAMES) {
     // Handoff shows only the next name (P4) and no card.
     await expect(page.getByText('Pass the phone to')).toBeVisible();

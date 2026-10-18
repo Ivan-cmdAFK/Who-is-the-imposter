@@ -1,30 +1,52 @@
+import { MIN_PLAYABLE } from '../data/wordLists';
 import type { Validation } from '../engine/game';
+import type { Player } from '../types';
 import { fitFont, SCREEN_WIDTH, seatLabel } from './format';
-import { ArrowRight } from './icons';
-import type { Player, Settings } from '../types';
+import { ArrowRight, Sliders } from './icons';
+
+/** A category chip: a built-in category or a custom word list. */
+export type CategoryOption = {
+  id: string;
+  name: string;
+  /** False for a custom list with too few words. */
+  playable: boolean;
+};
 
 type Props = {
   players: Player[];
-  settings: Settings;
-  categories: string[];
+  categories: CategoryOption[];
+  /** Selected ids that can be dealt from (see activeSelection). */
+  active: string[];
   validation: Validation;
-  onToggleCategory: (category: string) => void;
+  onToggleCategory: (id: string) => void;
   onEditPlayers: () => void;
+  onOpenSettings: () => void;
   onDeal: () => void;
 };
 
-export function HomeView({ players, settings, categories, validation, onToggleCategory, onEditPlayers, onDeal }: Props) {
-  const picked = settings.categories.filter((c) => categories.includes(c));
-  const summary = picked.length === 0 ? 'ALL CATEGORIES' : picked.join(', ').toUpperCase();
+export function HomeView({
+  players,
+  categories,
+  active,
+  validation,
+  onToggleCategory,
+  onEditPlayers,
+  onOpenSettings,
+  onDeal,
+}: Props) {
+  const picked = categories.filter((c) => active.includes(c.id));
+  const summary = picked.length === 0 ? 'ALL BUILT-IN' : picked.map((c) => c.name).join(', ').toUpperCase();
 
   return (
     <main class="screen">
       <div class="topbar mono">
         <span>3–12 PLAYERS</span>
-        <span>ONE PHONE</span>
+        <button type="button" class="icon-btn end" aria-label="Themes and word lists" onClick={onOpenSettings}>
+          <Sliders />
+        </button>
       </div>
 
-      <h1 class="display xl" style={{ marginTop: '12px', fontSize: fitFont('Imposter', 92, SCREEN_WIDTH) }}>
+      <h1 class="display xl" style={{ marginTop: '4px', fontSize: fitFont('Imposter', 92, SCREEN_WIDTH) }}>
         Imposter
       </h1>
       <p style={{ margin: '16px 0 0', fontSize: '19px', lineHeight: 1.3, maxWidth: '300px' }}>
@@ -60,13 +82,15 @@ export function HomeView({ players, settings, categories, validation, onToggleCa
       <div class="chips">
         {categories.map((c) => (
           <button
-            key={c}
+            key={c.id}
             type="button"
             class="chip"
-            aria-pressed={picked.includes(c) ? 'true' : 'false'}
-            onClick={() => onToggleCategory(c)}
+            disabled={!c.playable}
+            aria-pressed={active.includes(c.id) ? 'true' : 'false'}
+            onClick={() => onToggleCategory(c.id)}
           >
-            {c}
+            {c.name}
+            {!c.playable && <span class="chip-note"> · needs {MIN_PLAYABLE} words</span>}
           </button>
         ))}
       </div>

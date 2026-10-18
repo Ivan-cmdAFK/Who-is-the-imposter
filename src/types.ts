@@ -3,7 +3,10 @@ export type Player = { id: string; name: string };
 export type WordEntry = { word: string; category: string };
 
 export type Settings = {
-  /** Selected categories. Empty means all categories. */
+  /**
+   * Selected categories: built-in category names and custom list ids.
+   * Empty means all built-in categories.
+   */
   categories: string[];
   /** When on, every card (the Imposter's too) shows the category. */
   showCategoryHint: boolean;
@@ -23,7 +26,16 @@ export type Round = {
   imposterGuessed?: boolean;
 };
 
-export type Phase = 'home' | 'setup' | 'handoff' | 'reveal' | 'clues' | 'vote' | 'result';
+export type Phase =
+  | 'home'
+  | 'setup'
+  | 'settings'
+  | 'list'
+  | 'handoff'
+  | 'reveal'
+  | 'clues'
+  | 'vote'
+  | 'result';
 
 /** Returns a float in [0, 1). */
 export type Rng = () => number;

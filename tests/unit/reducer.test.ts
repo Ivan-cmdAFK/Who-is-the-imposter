@@ -10,7 +10,8 @@ const players = [
   { id: 'c', name: 'Leo' },
 ];
 const round = { ...newRound(players, { word: 'Taco', category: 'Food' }, seededRng(1)), imposterId: 'b' };
-const home: State = { phase: 'home', players, settings: DEFAULT_SETTINGS, used: {} };
+const home: State = { phase: 'home', players, settings: DEFAULT_SETTINGS, used: {}, theme: 'paper', lists: [] };
+const crew = { id: 'crew', name: 'Our crew', words: ['a', 'b', 'c', 'd', 'e'], visible: true };
 const run = (state: State, ...actions: Action[]) => actions.reduce(reduce, state);
 
 describe('reducer', () => {
@@ -83,6 +84,30 @@ describe('reducer', () => {
     expect(s.phase).toBe('handoff');
     expect(s.players).toBe(players);
     expect(s.round?.revealIndex).toBe(0);
+  });
+
+  it('opens settings and a word list, and goes back', () => {
+    let s = run({ ...home, lists: [crew] }, { type: 'goSettings' });
+    expect(s.phase).toBe('settings');
+    s = run(s, { type: 'openList', listId: 'crew' });
+    expect(s.phase).toBe('list');
+    expect(s.editingListId).toBe('crew');
+    expect(run(s, { type: 'openList', listId: 'nope' })).toBe(s);
+    s = run(s, { type: 'goSettings' });
+    expect(s.editingListId).toBeUndefined();
+  });
+
+  it('TH1: the theme can change outside a round, never during one', () => {
+    expect(run(home, { type: 'setTheme', theme: 'lilac' }).theme).toBe('lilac');
+    const handoff = run(home, { type: 'deal', round, used: {} });
+    expect(run(handoff, { type: 'setTheme', theme: 'lilac' })).toBe(handoff);
+  });
+
+  it('lists can change outside a round, never during one', () => {
+    const s = run({ ...home, phase: 'list', editingListId: 'crew', lists: [crew] }, { type: 'setLists', lists: [] });
+    expect(s.lists).toEqual([]);
+    const handoff = run(home, { type: 'deal', round, used: {} });
+    expect(run(handoff, { type: 'setLists', lists: [crew] })).toBe(handoff);
   });
 
   it('leaving the round drops it', () => {

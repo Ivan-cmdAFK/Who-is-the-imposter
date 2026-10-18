@@ -1,9 +1,13 @@
+import { DEFAULT_THEME, isThemeId, type ThemeId } from '../themes';
 import type { Player, Settings, UsedWords } from '../types';
+import { MAX_LIST_NAME, MAX_LISTS, MAX_WORD_LENGTH, MAX_WORDS, type WordList } from './wordLists';
 
 const KEYS = {
   players: 'imposter.v1.players',
   settings: 'imposter.v1.settings',
   used: 'imposter.v1.used',
+  theme: 'imposter.v1.theme',
+  lists: 'imposter.v1.lists',
 } as const;
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -61,6 +65,34 @@ export function loadUsed(store: KeyValueStore): UsedWords {
   }
   return out;
 }
+
+export function loadTheme(store: KeyValueStore): ThemeId {
+  const v = read(store, KEYS.theme);
+  return isThemeId(v) ? v : DEFAULT_THEME;
+}
+
+export function loadLists(store: KeyValueStore): WordList[] {
+  const v = read(store, KEYS.lists);
+  if (!Array.isArray(v)) return [];
+  const out: WordList[] = [];
+  for (const item of v) {
+    if (typeof item !== 'object' || item === null) continue;
+    const { id, name, words, visible } = item as Record<string, unknown>;
+    if (typeof id !== 'string' || typeof name !== 'string' || !Array.isArray(words)) continue;
+    out.push({
+      id,
+      name: name.slice(0, MAX_LIST_NAME),
+      words: words
+        .filter((w): w is string => typeof w === 'string' && w.trim() !== '' && w.length <= MAX_WORD_LENGTH)
+        .slice(0, MAX_WORDS),
+      visible: visible !== false,
+    });
+  }
+  return out.slice(0, MAX_LISTS);
+}
+
+export const saveTheme = (store: KeyValueStore, theme: ThemeId) => write(store, KEYS.theme, theme);
+export const saveLists = (store: KeyValueStore, lists: WordList[]) => write(store, KEYS.lists, lists);
 
 export const savePlayers = (store: KeyValueStore, players: Player[]) => write(store, KEYS.players, players);
 export const saveSettings = (store: KeyValueStore, settings: Settings) => write(store, KEYS.settings, settings);
